@@ -1,4 +1,4 @@
-# power_analysis 💪🔍
+# power-analysis 💪🔍
 
 `power-analysis` is a Python package for performing power analysis and calculating sample sizes for statistical models. The package provides classes for defining statistical models, performing power analysis, and calculating sample sizes for two-sample t-tests.
 
@@ -7,7 +7,7 @@
 You can install the `power_analysis` package using pip:
 
 ```bash
-pip install power_analysis
+pip install power-analysis
 ```
 
 ## Usage 🧑‍💻
