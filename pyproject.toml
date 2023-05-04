@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "src"
+name = "power_analysis"
 version = "0.1.0"
 description = "This package allows you to perform power analysis computations"
 license = "MIT"
