@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "power_analysis"
-version = "0.1.0"
+version = "0.1.1"
 description = "This package allows you to perform power analysis computations"
 license = "MIT"
 authors = ["Rodrigo Franco <franc703@umn.edu>"]
