@@ -51,8 +51,8 @@ class PowerAnalysis:
         if random_seed is not None:
             np.random.seed(random_seed)
 
-    def fit_model(self, data: pd.DataFrame, control_vars: list[str] | None = None,
-                  fixed_effects: list[str] | None = None, cluster_var: str | None = None) -> tuple[float, float]:
+    def fit_model(self, data: pd.DataFrame, control_vars: list = None,
+                  fixed_effects: list = None, cluster_var: str = None) -> tuple[float, float]:
         """
          Fits a linear regression model to the provided data and returns the treatment effect and p-value.
 
