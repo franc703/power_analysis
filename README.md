@@ -66,7 +66,3 @@ Contributions to `power-analysis` are welcome! If you find a bug or would like t
 ## License 📜
 
 `power-analysis` is licensed under the MIT license. See `LICENSE` for more information.
-
-```
-
-```
