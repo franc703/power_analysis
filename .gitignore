@@ -6,3 +6,5 @@ __pycache__/
 dist/
 build/
 .venv/
+power_analysis/Examples.py
+power_analysis/SimpleBootstrap.py
