@@ -7,7 +7,7 @@ authors = ["Rodrigo Franco <franc703@umn.edu>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.7,<3.12"
+python = ">=3.7,<3.11"
 numpy = ">=1.16.5, <1.23.0"
 scipy = "^1.7.2"
 
