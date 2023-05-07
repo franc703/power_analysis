@@ -8,7 +8,8 @@ from typing import Optional
 
 class PowerAnalysis:
     """
-    This class conducts power analysis on observational panel data using a clustered bootstrap method.
+    This class conducts power analysis on observational panel data using a clustered bootstrap method. 
+    This allows for bootstrapping on people rather than on observations.
 
     It calculates statistical power by varying the number of observations (N) and effect sizes.
     The class takes the following input arguments:
