@@ -1,6 +1,7 @@
+````markdown
 # power-analysis 💪🔍
 
-`power-analysis` is a Python package for performing power analysis and calculating sample sizes for statistical models. The package provides classes for defining statistical models, performing power analysis, and calculating sample sizes for two-sample t-tests.
+`power-analysis` is a Python package for performing power analysis and calculating sample sizes for statistical models. The package provides classes for defining statistical models, performing power analysis, calculating sample sizes for two-sample t-tests, and conducting power analysis on observational panel data using a clustered bootstrap method.
 
 ## Installation 📥
 
@@ -9,52 +10,56 @@ You can install the `power_analysis` package using pip:
 ```bash
 pip install power-analysis
 ```
+````
 
 ## Usage 🧑‍💻
 
-To use the `power-analysis` package, you first need to define a statistical model using a Python function that takes a sample size as input and returns the estimated effect size of the model. For example:
+### Panel Data Power Analysis
+
+To use the `PanelBootstrap` class for power analysis on observational panel data, you can follow these steps:
+
+1. Import the required packages and classes:
 
 ```python
-def my_model(n):
-    # define your model here
-    effect_size = ...
-    return effect_size
+import numpy as np
+import pandas as pd
+from power_analysis import PanelBootstrap
 ```
 
-You can then create a `Model` object using this function:
+2. Load your panel data into a pandas DataFrame:
 
 ```python
-from power_analysis import Model
-
-model = Model(my_model)
+data = pd.read_csv('your_data.csv')
 ```
 
-You can perform a power analysis for this model using the `PowerAnalysis` class:
+3. Create a `PanelBootstrap` object with the required parameters:
 
 ```python
-from power_analysis import PowerAnalysis
-
-power_analysis = PowerAnalysis(model, n=100, alpha=0.05, power=0.8, effect_size=0.5, iterations=1000)
-results = power_analysis.results()
+power_analysis = PanelBootstrap(data, outcome_var='outcome', treatment_var='treatment', individual_var='individual', random_seed=42)
 ```
 
-This will calculate the minimum detectable effect and sample size required to achieve a power of 0.8 for the given model, starting with an initial sample size of 100.
-
-You can also calculate the sample size required for a two-sample t-test using the `TTestSampleSize` class:
+4. Use the `fit_model` method to fit a linear regression model and obtain the treatment effect and p-value:
 
 ```python
-from power_analysis import TTestSampleSize
+treatment_effect, p_value = power_analysis.fit_model(data)
+```
 
-mean_diff = 1.5
-sd = 2.0
+5. Perform a clustered bootstrap analysis to obtain the mean effect size, standard deviation of effect sizes, and a list of p-values:
+
+```python
+mean_effect_size, std_effect_size, p_values = power_analysis.clustered_bootstrap(n_bootstrap=1000)
+```
+
+6. Calculate the statistical power when varying the number of observations (N) or effect sizes:
+
+```python
+n_values = [50, 100, 150, 200, 250, 300]
 alpha = 0.05
-power = 0.8
+n_bootstrap = 1000
 
-sample_size = TTestSampleSize(mean_diff, sd, alpha, power, n=None)
-n = sample_size.result()
+power_by_n = power_analysis.calculate_power_by_n(n_values, alpha, n_bootstrap)
+power_by_effect_size = power_analysis.calculate_power_by_effect_size(effect_sizes, alpha, n_bootstrap)
 ```
-
-This will calculate the sample size required to achieve a power of 0.8 for a two-sample t-test with a difference in means of 1.5, a standard deviation of 2.0, and a significance level of 0.05.
 
 ## Contributing 🤝
 
@@ -63,3 +68,7 @@ Contributions to `power-analysis` are welcome! If you find a bug or would like t
 ## License 📜
 
 `power-analysis` is licensed under the MIT license. See `LICENSE` for more information.
+
+```
+
+```

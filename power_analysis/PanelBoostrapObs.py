@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 from statsmodels.stats.power import TTestIndPower
-from typing import List, Tuple
+from optional import Optional
 
 
 class PowerAnalysis:
@@ -50,8 +50,8 @@ class PowerAnalysis:
         if random_seed is not None:
             np.random.seed(random_seed)
 
-    def fit_model(self, data: pd.DataFrame, control_vars: Optional[List[str]] = None,
-                  fixed_effects: Optional[List[str]] = None, cluster_var: Optional[str] = None) -> Tuple[float, float]:
+    def fit_model(self, data: pd.DataFrame, control_vars: Optional[list[str]] = None,
+                  fixed_effects: Optional[list[str]] = None, cluster_var: Optional[str] = None) -> tuple[float, float]:
         """
          Fits a linear regression model to the provided data and returns the treatment effect and p-value.
 
