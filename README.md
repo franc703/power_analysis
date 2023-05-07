@@ -14,7 +14,7 @@ pip install power-analysis
 
 ### Panel Data Power Analysis
 
-To use the `PanelBootstrap` class for power analysis on observational panel data, you can follow these steps:
+To use the `PanelBootstrapObs` class for power analysis on observational panel data, you can follow these steps:
 
 1. Import the required packages and classes:
 
