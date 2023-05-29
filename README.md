@@ -61,7 +61,7 @@ power_by_effect_size = power_analysis.calculate_power_by_effect_size(effect_size
 
 ## Contributing 🤝
 
-Contributions to `power-analysis` are welcome! If you find a bug or would like to suggest a new feature, please open an issue on GitHub.
+Contributions to `power-analysis` are welcome! If you find a bug or would like to suggest a new feature, please open an issue on GitHub, thank you.
 
 ## License 📜
 
