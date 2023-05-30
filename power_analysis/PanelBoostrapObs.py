@@ -2,13 +2,11 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
-from statsmodels.stats.power import TTestIndPower
-from typing import Optional
 
 
 class PowerAnalysis:
     """
-    This class conducts power analysis on observational panel data using a clustered bootstrap method. 
+    This class conducts power analysis on observational panel data using a clustered bootstrap method.
     This allows for bootstrapping on people rather than on observations.
 
     It calculates statistical power by varying the number of observations (N) and effect sizes.
@@ -44,7 +42,9 @@ class PowerAnalysis:
         Calculates the statistical power for a list of effect sizes and returns a DataFrame containing the effect sizes and their corresponding statistical power.
     """
 
-    def __init__(self, data, outcome_var, treatment_var, individual_var, random_seed=None):
+    def __init__(
+        self, data, outcome_var, treatment_var, individual_var, random_seed=None
+    ):
         self.data = data
         self.outcome_var = outcome_var
         self.treatment_var = treatment_var
@@ -52,27 +52,32 @@ class PowerAnalysis:
         if random_seed is not None:
             np.random.seed(random_seed)
 
-    def fit_model(self, data: pd.DataFrame, control_vars: list = None,
-                  fixed_effects: list = None, cluster_var: str = None) -> tuple[float, float]:
+    def fit_model(
+        self,
+        data: pd.DataFrame,
+        control_vars: list = None,
+        fixed_effects: list = None,
+        cluster_var: str = None,
+    ) -> tuple[float, float]:
         """
-         Fits a linear regression model to the provided data and returns the treatment effect and p-value.
+        Fits a linear regression model to the provided data and returns the treatment effect and p-value.
 
-         Parameters:
-         -----------
-         data: pd.DataFrame
-             A DataFrame containing the observational panel data.
+        Parameters:
+        -----------
+        data: pd.DataFrame
+            A DataFrame containing the observational panel data.
 
-         control_vars: List[str], optional
-             A list of variables to include as fixed
-              effects in the regression model.
+        control_vars: List[str], optional
+            A list of variables to include as fixed
+             effects in the regression model.
 
-         fixed_effects: List[str], optional
-             A list of variables to include as fixed effects in the regression model.
+        fixed_effects: List[str], optional
+            A list of variables to include as fixed effects in the regression model.
 
-         cluster_var: str, optional
-             The name of the column in the DataFrame representing the individual identifier (cluster).
+        cluster_var: str, optional
+            The name of the column in the DataFrame representing the individual identifier (cluster).
 
-         Returns:  Tuple[float, float]
+        Returns:  Tuple[float, float]
         """
         if control_vars is None:
             control_vars = []
@@ -89,32 +94,40 @@ class PowerAnalysis:
 
         if cluster_var is not None:
             cluster = data[cluster_var]
-            model = model.get_robustcov_results(
-                cov_type='cluster', groups=cluster)
+            model = model.get_robustcov_results(cov_type="cluster", groups=cluster)
 
         return model.params[self.treatment_var], model.pvalues[self.treatment_var]
 
-    def clustered_bootstrap(self, n_bootstrap):
+    def clustered_bootstrap(self, n_bootstrap, n=None):
         """
-         Performs a clustered bootstrap by resampling individuals (clusters) and returns the mean effect size, standard deviation of effect sizes, and a list of p-values.
+        Performs a clustered bootstrap by resampling individuals (clusters) and returns the mean effect size, standard deviation of effect sizes, and a list of p-values.
 
-         Parameters
-         ----------
-         n_bootstrap: int
-             The number of bootstrap iterations.
+        Parameters
+        ----------
+        n_bootstrap: int
+        The number of bootstrap iterations.
+        n: int, optional
+        The number of individuals to sample in each bootstrap iteration. If not provided, all individuals are sampled.
 
-         Returns
-         -------
-         Tuple[float, float
+        Returns
+        -------
+        Tuple[float, float]
         """
         boot_results = []
         boot_pvalues = []
 
         for _ in range(n_bootstrap):
-            sampled_individuals = np.random.choice(self.data[self.individual_var].unique(
-            ), size=len(self.data[self.individual_var].unique()), replace=True)
-            boot_data = self.data[self.data[self.individual_var].isin(
-                sampled_individuals)]
+            num_individuals = (
+                n if n is not None else len(self.data[self.individual_var].unique())
+            )
+            sampled_individuals = np.random.choice(
+                self.data[self.individual_var].unique(),
+                size=num_individuals,
+                replace=True,
+            )
+            boot_data = self.data[
+                self.data[self.individual_var].isin(sampled_individuals)
+            ]
             boot_result, boot_pvalue = self.fit_model(boot_data)
             boot_results.append(boot_result)
             boot_pvalues.append(boot_pvalue)
@@ -123,7 +136,7 @@ class PowerAnalysis:
 
     def calculate_power_by_n(self, n_values, alpha, n_bootstrap):
         """
-         Calculates the statistical power when varying the number of observations (N) and returns a DataFrame containing the N values and their corresponding statistical power.
+        Calculates the statistical power when varying the number of observations (N) and returns a DataFrame containing the N values and their corresponding statistical power.
 
         Parameters
         ----------
@@ -136,33 +149,37 @@ class PowerAnalysis:
         power_by_n = []
 
         for n in n_values:
-            _, _, boot_pvalues = self.clustered_bootstrap(n_bootstrap)
+            _, _, boot_pvalues = self.clustered_bootstrap(n_bootstrap, n)
             power = np.mean(np.array(boot_pvalues) < alpha)
             power_by_n.append(power)
 
-        return pd.DataFrame({'N': n_values, 'Power': power_by_n})
+        return pd.DataFrame({"N": n_values, "Power": power_by_n})
 
     def calculate_power_by_effect_size(self, effect_sizes, alpha, n_bootstrap):
         """
-         Calculates the statistical power for a list of effect sizes and returns a DataFrame containing the effect sizes and their corresponding statistical power.
+        Calculates the statistical power for a list of effect sizes and returns a DataFrame containing the effect sizes and their corresponding statistical power.
 
-         Parameters
-         ----------
-         effect_sizes: List[float]
-             A list of effect sizes.
+        Parameters
+        ----------
+        effect_sizes: List[float]
+            A list of effect sizes.
 
-         alpha: float
-             The significance level.
+        alpha: float
+            The significance level.
 
-         n_bootstrap: int
+        n_bootstrap: int
         """
         _, _, boot_pvalues = self.clustered_bootstrap(n_bootstrap)
         power_by_effect_size = []
 
         for effect_size in effect_sizes:
             pvalues = np.array(boot_pvalues)
-            power = np.mean((pvalues < alpha) & (
-                np.abs(self.data[self.treatment_var]) >= effect_size))
+            power = np.mean(
+                (pvalues < alpha)
+                & (np.abs(self.data[self.treatment_var]) >= effect_size)
+            )
             power_by_effect_size.append(power)
 
-        return pd.DataFrame({'Effect Size': effect_sizes, 'Power': power_by_effect_size})
+        return pd.DataFrame(
+            {"Effect Size": effect_sizes, "Power": power_by_effect_size}
+        )
