@@ -22,13 +22,13 @@ effect_sizes = [0.1, 0.2, 0.3, 0.4, 0.5]
 def power_analysis():
     return PowerAnalysis(df, 'outcome_var', 'treatment_var', 'individual_var')
 
-
+# pylint: disable=redefined-outer-name
 def test_fit_model(power_analysis):
     effect, pvalue = power_analysis.fit_model(df)
     assert isinstance(effect, float)
     assert isinstance(pvalue, float)
 
-
+# pylint: disable=redefined-outer-name
 def test_clustered_bootstrap(power_analysis):
     mean_effect, std_effect, pvalues = power_analysis.clustered_bootstrap(n_bootstrap)
     assert isinstance(mean_effect, float)
@@ -36,7 +36,7 @@ def test_clustered_bootstrap(power_analysis):
     assert isinstance(pvalues, list)
     assert len(pvalues) == n_bootstrap
 
-
+# pylint: disable=redefined-outer-name
 def test_calculate_power_by_n(power_analysis):
     power_df = power_analysis.calculate_power_by_n(n_values, alpha, n_bootstrap)
     assert isinstance(power_df, pd.DataFrame)
